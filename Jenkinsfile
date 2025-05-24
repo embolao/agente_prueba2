@@ -73,12 +73,6 @@ pipeline {
                     sh "${pythonExe} -m pytest --cov=src/agente_prueba2 --cov-report=xml --cov-report=html tests/"
                 }
             }
-            post {
-                always {
-                    // Publicar cobertura XML si quieres (opcional)
-                    publishCoverage adapters: [coberturaAdapter('coverage.xml')]
-                }
-            }
         }
 
         stage('Publish Coverage HTML') {
