@@ -4,10 +4,7 @@ pipeline {
     environment {
         PYTHON_VERSION = '3.13.3'
         VENV_DIR = "${env.WORKSPACE}/venv"
-        PYENV_ROOT = "${env.HOME}/.pyenv"
-        PATH = "${env.HOME}/.pyenv/shims:${env.HOME}/.pyenv/bin:${env.PATH}"
-        PYTHON = "${VENV_DIR}/bin/python"
-        PIP = "${VENV_DIR}/bin/pip"
+        // No definir PYTHON y PIP aquí porque el entorno virtual se crea en ejecución
     }
 
     stages {
@@ -20,22 +17,35 @@ pipeline {
         stage('Set Up Python') {
             steps {
                 script {
-                    // Configurar pyenv y crear entorno virtual
+                    def usePyenv = sh(script: 'command -v pyenv >/dev/null 2>&1', returnStatus: true) == 0
+
+                    if (usePyenv) {
+                        echo 'Usando pyenv para configurar Python...'
+                        sh """
+                            export PYENV_ROOT="\$HOME/.pyenv"
+                            export PATH="\$PYENV_ROOT/bin:\$PATH"
+                            eval "\$(pyenv init --path)"
+                            eval "\$(pyenv init -)"
+                            
+                            if ! pyenv versions --bare | grep -q "^${PYTHON_VERSION}\$"; then
+                                pyenv install -s ${PYTHON_VERSION}
+                            fi
+                            
+                            pyenv global ${PYTHON_VERSION}
+                            python -m venv ${VENV_DIR}
+                        """
+                    } else {
+                        echo 'pyenv no encontrado, usando Python del sistema...'
+                        sh "python3 -m venv ${VENV_DIR}"
+                    }
+
+                    def pythonExe = "${VENV_DIR}/bin/python"
+                    def pipExe = "${VENV_DIR}/bin/pip"
+
                     sh """
-                        # Inicializar pyenv
-                        export PYENV_ROOT="${env.HOME}/.pyenv"
-                        export PATH="\$PYENV_ROOT/shims:\$PYENV_ROOT/bin:\$PATH"
-                        eval "\$(pyenv init -)"
-                        
-                        # Instalar Python si no está instalado
-                        pyenv install -s ${PYTHON_VERSION}
-                        pyenv global ${PYTHON_VERSION}
-                        
-                        # Crear y configurar entorno virtual
-                        python -m venv ${VENV_DIR}
-                        ${PIP} install --upgrade pip wheel setuptools
-                        ${PIP} install -e .[testing]
-                    """.stripIndent()
+                        ${pipExe} install --upgrade pip wheel setuptools
+                        ${pipExe} install -e .[testing]
+                    """
                 }
             }
         }
@@ -43,11 +53,13 @@ pipeline {
         stage('Lint') {
             steps {
                 script {
-                    sh "${PIP} install flake8 black isort mypy"
-                    sh "${PYTHON} -m flake8 src/ tests/"
-                    sh "${PYTHON} -m black --check src/ tests/"
-                    sh "${PYTHON} -m isort --check-only src/ tests/"
-                    sh "${PYTHON} -m mypy src/ tests/"
+                    def pythonExe = "${env.WORKSPACE}/venv/bin/python"
+                    def pipExe = "${env.WORKSPACE}/venv/bin/pip"
+                    sh "${pipExe} install flake8 black isort mypy"
+                    sh "${pythonExe} -m flake8 src/ tests/"
+                    sh "${pythonExe} -m black --check src/ tests/"
+                    sh "${pythonExe} -m isort --check-only src/ tests/"
+                    sh "${pythonExe} -m mypy src/ tests/"
                 }
             }
         }
@@ -55,8 +67,10 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    sh "${PIP} install pytest pytest-cov"
-                    sh "${PYTHON} -m pytest --cov=src/agente_prueba2 --cov-report=xml tests/"
+                    def pythonExe = "${env.WORKSPACE}/venv/bin/python"
+                    def pipExe = "${env.WORKSPACE}/venv/bin/pip"
+                    sh "${pipExe} install pytest pytest-cov"
+                    sh "${pythonExe} -m pytest --cov=src/agente_prueba2 --cov-report=xml tests/"
                 }
             }
             post {
@@ -69,8 +83,10 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    sh "${PIP} install build"
-                    sh "${PYTHON} -m build"
+                    def pythonExe = "${env.WORKSPACE}/venv/bin/python"
+                    def pipExe = "${env.WORKSPACE}/venv/bin/pip"
+                    sh "${pipExe} install build"
+                    sh "${pythonExe} -m build"
                     archiveArtifacts artifacts: 'dist/*', fingerprint: true
                 }
             }
@@ -79,10 +95,9 @@ pipeline {
 
     post {
         always {
-            // Limpiar solo archivos temporales, no el entorno virtual
-            cleanWs(cleanWhenAborted: true, cleanWhenFailure: true, 
-                   cleanWhenNotBuilt: true, cleanWhenUnstable: true, 
-                   deleteDirs: false)
+            cleanWs(cleanWhenAborted: true, cleanWhenFailure: true,
+                    cleanWhenNotBuilt: true, cleanWhenUnstable: true,
+                    deleteDirs: false)
         }
         success {
             echo 'Pipeline ejecutado exitosamente!'
