@@ -4,6 +4,7 @@ pipeline {
     environment {
         PYTHON_VERSION = '3.13.3'
         VENV_DIR = "${env.WORKSPACE}/venv"
+        EMAIL_RECIPIENT = credentials('email_recipient') // ID de tu credencial en Jenkins
     }
 
     stages {
@@ -11,7 +12,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        library('mi-shared-library')  // Cambia por el nombre real de tu librería
+                        library('mi-shared-library')
                         echo "Shared Library cargada correctamente"
                     } catch (e) {
                         echo "No se pudo cargar la Shared Library: ${e}"
@@ -119,6 +120,12 @@ pipeline {
             cleanWs(cleanWhenAborted: true, cleanWhenFailure: true,
                     cleanWhenNotBuilt: true, cleanWhenUnstable: true,
                     deleteDirs: false)
+            emailext (
+                to: "${EMAIL_RECIPIENT}",
+                subject: "Notificación pipeline ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                mimeType: 'text/html',
+                body: '${JELLY_SCRIPT,template="NotificacionDeBuild1"}'
+            )
         }
         success {
             echo 'Pipeline ejecutado exitosamente!'
