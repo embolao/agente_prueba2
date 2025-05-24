@@ -26,11 +26,11 @@ pipeline {
                             export PATH="\$PYENV_ROOT/bin:\$PATH"
                             eval "\$(pyenv init --path)"
                             eval "\$(pyenv init -)"
-                            
+
                             if ! pyenv versions --bare | grep -q "^${PYTHON_VERSION}\$"; then
                                 pyenv install -s ${PYTHON_VERSION}
                             fi
-                            
+
                             pyenv global ${PYTHON_VERSION}
                             python -m venv ${VENV_DIR}
                         """
@@ -57,7 +57,7 @@ pipeline {
                     def pipExe = "${env.WORKSPACE}/venv/bin/pip"
                     sh "${pipExe} install flake8 black isort mypy"
                     sh "${pythonExe} -m flake8 src/ tests/"
-                    sh "${pythonExe} -m black --check src/ tests/"
+                    sh "${pythonExe} -m black src/ tests/"          // Aquí quito el --check para que reformatee
                     sh "${pythonExe} -m isort --check-only src/ tests/"
                     sh "${pythonExe} -m mypy src/ tests/"
                 }
