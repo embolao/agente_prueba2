@@ -4,7 +4,6 @@ pipeline {
     environment {
         PYTHON_VERSION = '3.13.3'
         VENV_DIR = "${env.WORKSPACE}/venv"
-        // No definir PYTHON y PIP aquí porque el entorno virtual se crea en ejecución
     }
 
     stages {
@@ -57,8 +56,8 @@ pipeline {
                     def pipExe = "${env.WORKSPACE}/venv/bin/pip"
                     sh "${pipExe} install flake8 black isort mypy"
                     sh "${pythonExe} -m flake8 src/ tests/"
-                    sh "${pythonExe} -m black src/ tests/"          // Aquí quito el --check para que reformatee
-                    sh "${pythonExe} -m isort --check-only src/ tests/"
+                    sh "${pythonExe} -m black src/ tests/"
+                    sh "${pythonExe} -m isort src/ tests/"     // Aquí se corrige para que formatee y no falle
                     sh "${pythonExe} -m mypy src/ tests/"
                 }
             }
