@@ -57,7 +57,7 @@ pipeline {
                     sh "${pipExe} install flake8 black isort mypy"
                     sh "${pythonExe} -m flake8 src/ tests/"
                     sh "${pythonExe} -m black src/ tests/"
-                    sh "${pythonExe} -m isort src/ tests/"     // Aquí se corrige para que formatee y no falle
+                    sh "${pythonExe} -m isort src/ tests/"
                     sh "${pythonExe} -m mypy src/ tests/"
                 }
             }
@@ -69,13 +69,28 @@ pipeline {
                     def pythonExe = "${env.WORKSPACE}/venv/bin/python"
                     def pipExe = "${env.WORKSPACE}/venv/bin/pip"
                     sh "${pipExe} install pytest pytest-cov"
-                    sh "${pythonExe} -m pytest --cov=src/agente_prueba2 --cov-report=xml tests/"
+                    // Nota: Generamos XML y HTML para cobertura
+                    sh "${pythonExe} -m pytest --cov=src/agente_prueba2 --cov-report=xml --cov-report=html tests/"
                 }
             }
             post {
                 always {
+                    // Publicar cobertura XML si quieres (opcional)
                     publishCoverage adapters: [coberturaAdapter('coverage.xml')]
                 }
+            }
+        }
+
+        stage('Publish Coverage HTML') {
+            steps {
+                publishHTML([
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: 'htmlcov',
+                    reportFiles: 'index.html',
+                    reportName: 'Coverage Report'
+                ])
             }
         }
 
