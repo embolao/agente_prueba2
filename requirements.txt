@@ -1,0 +1,20 @@
+# Dependencias principales
+importlib-metadata>=4.0.0; python_version < "3.8"
+
+# Dependencias de desarrollo y pruebas
+pytest>=7.0.0
+pytest-cov>=3.0.0
+flake8>=4.0.0
+black>=22.0.0
+isort>=5.0.0
+mypy>=0.900
+build>=0.7.0
+wheel>=0.37.0
+setuptools>=60.0.0
+
+# Dependencias para documentación (si es necesario)
+# sphinx>=4.0.0
+# sphinx-rtd-theme>=1.0.0
+
+# Otras dependencias del proyecto
+# Añade aquí otras dependencias específicas de tu proyecto
