@@ -7,6 +7,20 @@ pipeline {
     }
 
     stages {
+        stage('Load Shared Library') {
+            steps {
+                script {
+                    try {
+                        library('mi-shared-library')  // Cambia por el nombre real de tu librería
+                        echo "Shared Library cargada correctamente"
+                    } catch (e) {
+                        echo "No se pudo cargar la Shared Library: ${e}"
+                        echo "Continuando sin la librería"
+                    }
+                }
+            }
+        }
+
         stage('Checkout') {
             steps {
                 checkout scm
