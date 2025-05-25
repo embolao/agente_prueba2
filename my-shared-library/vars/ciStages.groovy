@@ -1,34 +1,27 @@
+// vars/ciStages.groovy
+
 def setupPython(Map args = [:]) {
-    def pythonVersion = args.pythonVersion ?: '3.12.3'
-    def venvDir = args.venvDir ?: './venv'
-
-    echo "Instalando Python versión ${pythonVersion} en ${venvDir}"
-
+    echo "Setting up Python ${args.pythonVersion}, venv at ${args.venvDir}"
     sh """
-        python3 -m venv ${venvDir}
+        python${args.pythonVersion} -m venv ${args.venvDir}
+        source ${args.venvDir}/bin/activate
+        pip install --upgrade pip
+        pip install -r requirements.txt
     """
 }
 
 def lintPython(Map args = [:]) {
-    def venvDir = args.venvDir ?: './venv'
-
-    echo "Ejecutando lint en el entorno virtual: ${venvDir}"
-
+    echo "Running lint"
     sh """
-        . ${venvDir}/bin/activate
-        pip install --quiet flake8
-        flake8 . --exclude=${venvDir}
+        source ${args.venvDir}/bin/activate
+        flake8 .
     """
 }
 
 def testPython(Map args = [:]) {
-    def venvDir = args.venvDir ?: './venv'
-
-    echo "Ejecutando pruebas en el entorno virtual: ${venvDir}"
-
+    echo "Running tests"
     sh """
-        . ${venvDir}/bin/activate
-        pip install --quiet -r requirements.txt
+        source ${args.venvDir}/bin/activate
         pytest
     """
 }
