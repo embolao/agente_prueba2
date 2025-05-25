@@ -1,10 +1,12 @@
 def call() {
     echo "Ejecutando tests..."
-    sh '''
-        #!/bin/bash
-        . venv/bin/activate
-        export PYTHONPATH=$(pwd)/agente_prueba2
-        pip install pytest
-        pytest agente_prueba2/tests/
-    '''
+    dir('agente_prueba2') {
+        sh '''
+            #!/bin/bash
+            set -e
+            . ../venv/bin/activate
+            export PYTHONPATH=$(pwd)
+            pytest tests/
+        '''
+    }
 }
