@@ -34,8 +34,3 @@ def testPython(Map args = [:]) {
         pytest tests/
     """
 }
-
-return this
-
-
-
