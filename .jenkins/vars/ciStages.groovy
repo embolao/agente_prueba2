@@ -1,13 +1,11 @@
 def setupPython(Map args = [:]) {
-    def pythonVersion = args.pythonVersion ?: '3.10.0'
+    def pythonVersion = args.pythonVersion ?: '3.12.3'
     def venvDir = args.venvDir ?: './venv'
 
     echo "Instalando Python versión ${pythonVersion} en ${venvDir}"
 
     sh """
         python3 -m venv ${venvDir}
-        . ${venvDir}/bin/activate
-        python --version
     """
 }
 
@@ -18,8 +16,8 @@ def lintPython(Map args = [:]) {
 
     sh """
         . ${venvDir}/bin/activate
-        pip install flake8 > /dev/null
-        flake8 .
+        pip install --quiet flake8
+        flake8 . --exclude=${venvDir}
     """
 }
 
@@ -30,7 +28,9 @@ def testPython(Map args = [:]) {
 
     sh """
         . ${venvDir}/bin/activate
-        pip install pytest > /dev/null
-        pytest tests/
+        pip install --quiet -r requirements.txt
+        pytest
     """
 }
+
+return this
