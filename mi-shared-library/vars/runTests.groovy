@@ -1,4 +1,4 @@
-def runTests() {
+def call() {
     echo "Ejecutando tests..."
     sh '''
         #!/bin/bash
