@@ -61,10 +61,8 @@ pipeline {
         }
         failure {
             echo 'El pipeline ha fallado. Por favor revisa los logs.'
-=======
             ciStages.cleanWorkspace()
             ciStages.sendEmail(credentialId: 'email_recipient')
->>>>>>> 44e9025 (Actualización completa del pipeline de Jenkins con funciones mejoradas)
         }
     }
 }
