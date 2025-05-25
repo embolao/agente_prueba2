@@ -4,10 +4,10 @@ pipeline {
     agent any
 
     stages {
-        stage('Test library') {
+        stage('Setup Python') {
             steps {
                 script {
-                    ciStages.hello()
+                    ciStages.setupPython(pythonVersion: '3.13.3', venvDir: "${env.WORKSPACE}/venv")
                 }
             }
         }
