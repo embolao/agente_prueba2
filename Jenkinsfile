@@ -3,15 +3,11 @@
 pipeline {
     agent any
 
-    environment {
-        VENV_DIR = "${env.WORKSPACE}/venv"
-    }
-
     stages {
         stage('Setup Python') {
             steps {
                 script {
-                    ciStages.setupPython(pythonVersion: '3.13.3', venvDir: env.VENV_DIR)
+                    setupPython(pythonVersion: '3.12.3', venvDir: "${env.WORKSPACE}/venv")
                 }
             }
         }
@@ -19,7 +15,7 @@ pipeline {
         stage('Lint') {
             steps {
                 script {
-                    ciStages.lintPython(venvDir: env.VENV_DIR)
+                    lintPython(venvDir: "${env.WORKSPACE}/venv")
                 }
             }
         }
@@ -27,7 +23,7 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    ciStages.testPython(venvDir: env.VENV_DIR)
+                    testPython(venvDir: "${env.WORKSPACE}/venv")
                 }
             }
         }
