@@ -2,13 +2,12 @@ def call() {
     echo "Ejecutando tests..."
 
     sh '''
-    . venv/bin/activate
-    cd agente_prueba2/tests
-    export PYTHONPATH=$(pwd)
-    pytest
-'''
-
+        # Activar entorno virtual de forma segura
+        export PYTHONPATH=$(pwd)/agente_prueba2
+        venv/bin/python3 -m pytest agente_prueba2/tests
+    '''
 }
+
 
 
 
