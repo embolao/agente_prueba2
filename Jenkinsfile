@@ -1,4 +1,5 @@
 @Library('mi-shared-library@master') _
+import ciStages
 
 pipeline {
     agent any
@@ -11,7 +12,7 @@ pipeline {
         stage('Setup Python') {
             steps {
                 script {
-                    ciStages.setupPython(pythonVersion: '3.13.3', venvDir: "${VENV_DIR}")
+                    ciStages.setupPython(pythonVersion: '3.13.3', venvDir: env.VENV_DIR)
                 }
             }
         }
@@ -19,7 +20,15 @@ pipeline {
         stage('Lint') {
             steps {
                 script {
-                    ciStages.lintPython(venvDir: "${VENV_DIR}")
+                    ciStages.lintPython(venvDir: env.VENV_DIR)
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                script {
+                    ciStages.testPython(venvDir: env.VENV_DIR)
                 }
             }
         }
@@ -27,8 +36,9 @@ pipeline {
 
     post {
         always {
-            echo "Pipeline finalizado"
+            echo 'Pipeline finalizado'
         }
     }
 }
+
 
