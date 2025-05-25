@@ -23,4 +23,3 @@ def call() {
         notifySlack("✅ Pipeline Python completada con éxito.")
     }
 }
-
