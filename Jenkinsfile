@@ -1,5 +1,4 @@
 @Library('mi-shared-library@master') _
-import ciStages
 
 pipeline {
     agent any
@@ -40,5 +39,3 @@ pipeline {
         }
     }
 }
-
-
