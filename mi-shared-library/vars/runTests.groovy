@@ -1,13 +1,13 @@
 def call() {
-    // Tu lógica aquí
     echo "Ejecutando tests..."
 
-    dir('agente_prueba2') {
+    dir('agente_prueba2/agente_prueba2') {
         sh '''
             . ../venv/bin/activate
-            export PYTHONPATH=$(pwd)/agente_prueba2
-            pytest agente_prueba2/tests/
+            export PYTHONPATH=$(pwd)
+            pytest tests/
         '''
     }
 }
+
 
