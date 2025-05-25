@@ -1,7 +1,9 @@
 def call() {
-    echo "Ejecutando linter (flake8)..."
     sh '''
-        source venv/bin/activate
+        #!/bin/bash
+        . venv/bin/activate
+        pip install flake8
         flake8 .
     '''
 }
+

@@ -1,7 +1,8 @@
 def call() {
-    echo "Ejecutando pruebas con pytest..."
     sh '''
-        source venv/bin/activate
+        #!/bin/bash
+        . venv/bin/activate
+        pip install pytest
         pytest tests/
     '''
 }

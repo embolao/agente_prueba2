@@ -1,9 +1,12 @@
 def call() {
-    echo "Creando entorno virtual y preparando dependencias..."
     sh '''
+        #!/bin/bash
         python3 -m venv venv
-        source venv/bin/activate
+        . venv/bin/activate
         pip install --upgrade pip
-        pip install -r requirements.txt
+        if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+        fi
     '''
 }
+

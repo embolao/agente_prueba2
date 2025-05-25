@@ -20,6 +20,7 @@ def call() {
     }
 
     stage('Notify') {
-        notifySlack("Pipeline Python completada con éxito.")
+        notifySlack("✅ Pipeline Python completada con éxito.")
     }
 }
+
