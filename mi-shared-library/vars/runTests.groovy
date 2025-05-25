@@ -1,10 +1,12 @@
 def call() {
+    echo "Ejecutando tests..."
+
     sh '''
-        export PYTHONPATH=$(pwd)/agente_prueba2
-        . venv/bin/activate
-        python -m pytest agente_prueba2/agente_prueba2/tests -v
+        export PYTHONPATH=$(pwd)/src
+        venv/bin/python3 -m pytest src/agente_prueba2/tests
     '''
 }
+
 
 
 
