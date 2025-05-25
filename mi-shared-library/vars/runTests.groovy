@@ -3,7 +3,7 @@ def call() {
 
     sh '''
     . venv/bin/activate
-    cd agente_prueba2
+    cd agente_prueba2/tests
     export PYTHONPATH=$(pwd)
     pytest
 '''
