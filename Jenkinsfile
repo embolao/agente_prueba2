@@ -1,4 +1,4 @@
-@Library('mi-shared-library@master') _
+@Library('mi-shared-library') _
 
 pipeline {
     agent any
@@ -7,31 +7,24 @@ pipeline {
         stage('Setup Python') {
             steps {
                 script {
-                    setupPython(pythonVersion: '3.12.3', venvDir: "${env.WORKSPACE}/venv")
+                    ciStages.setupPython(pythonVersion: '3.12', venvDir: "${env.WORKSPACE}/venv")
                 }
             }
         }
-
         stage('Lint') {
             steps {
                 script {
-                    lintPython(venvDir: "${env.WORKSPACE}/venv")
+                    ciStages.lintPython(venvDir: "${env.WORKSPACE}/venv")
                 }
             }
         }
-
         stage('Test') {
             steps {
                 script {
-                    testPython(venvDir: "${env.WORKSPACE}/venv")
+                    ciStages.testPython(venvDir: "${env.WORKSPACE}/venv")
                 }
             }
         }
     }
-
-    post {
-        always {
-            echo 'Pipeline finalizado'
-        }
-    }
 }
+
