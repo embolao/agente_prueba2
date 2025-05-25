@@ -8,4 +8,3 @@ def runTests() {
         pytest agente_prueba2/tests/
     '''
 }
-
