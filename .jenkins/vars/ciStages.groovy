@@ -1,7 +1,26 @@
 def setupPython(Map args = [:]) {
-    def pythonVersion = args.get('pythonVersion', '3.10.0')
-    def venvDir = args.get('venvDir', '.venv')
+    def pythonVersion = args.pythonVersion ?: '3.10.0'
+    def venvDir = args.venvDir ?: './venv'
+
     echo "Instalando Python versión ${pythonVersion} en ${venvDir}"
-    // Aquí iría la lógica real, por ejemplo, con sh
+
+    sh """
+        python3 -m venv ${venvDir}
+        source ${venvDir}/bin/activate
+        python --version
+    """
 }
+
+def lintPython(Map args = [:]) {
+    def venvDir = args.venvDir ?: './venv'
+
+    echo "Ejecutando lint en el entorno virtual: ${venvDir}"
+
+    sh """
+        source ${venvDir}/bin/activate
+        pip install flake8 > /dev/null
+        flake8 .
+    """
+}
+
 
