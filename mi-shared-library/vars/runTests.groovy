@@ -3,13 +3,18 @@ def call() {
 
     sh '''
         # Configurar entorno
-        export PYTHONPATH=$(pwd)  # Apunta al directorio raíz (donde está venv/)
-        source venv/bin/activate  # Activa el entorno virtual
+        export PYTHONPATH=$(pwd)
+        . venv/bin/activate  # Usar punto en lugar de source
         
-        # Ejecutar pytest desde la raíz, apuntando a la carpeta tests
+        # Ver estructura de archivos (debug)
+        echo "Estructura del directorio:"
+        ls -la agente_prueba2/
+        
+        # Ejecutar pytest con verbosidad
         python -m pytest agente_prueba2/tests -v
         
-        deactivate  # Desactiva el entorno (opcional)
+        # Opcional: desactivar entorno
+        deactivate
     '''
 }
 
