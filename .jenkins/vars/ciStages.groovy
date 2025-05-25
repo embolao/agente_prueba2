@@ -6,7 +6,7 @@ def setupPython(Map args = [:]) {
 
     sh """
         python3 -m venv ${venvDir}
-        source ${venvDir}/bin/activate
+        . ${venvDir}/bin/activate
         python --version
     """
 }
@@ -17,10 +17,25 @@ def lintPython(Map args = [:]) {
     echo "Ejecutando lint en el entorno virtual: ${venvDir}"
 
     sh """
-        source ${venvDir}/bin/activate
+        . ${venvDir}/bin/activate
         pip install flake8 > /dev/null
         flake8 .
     """
 }
+
+def testPython(Map args = [:]) {
+    def venvDir = args.venvDir ?: './venv'
+
+    echo "Ejecutando pruebas en el entorno virtual: ${venvDir}"
+
+    sh """
+        . ${venvDir}/bin/activate
+        pip install pytest > /dev/null
+        pytest tests/
+    """
+}
+
+return this
+
 
 
