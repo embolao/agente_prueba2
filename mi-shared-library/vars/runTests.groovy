@@ -1,8 +1,11 @@
-def call() {
+def runTests() {
+    echo "Ejecutando tests..."
     sh '''
         #!/bin/bash
-        . venv/bin/activate
+        source venv/bin/activate
+        export PYTHONPATH=$(pwd)/agente_prueba2
         pip install pytest
-        pytest tests/
+        pytest agente_prueba2/tests/
     '''
 }
+
